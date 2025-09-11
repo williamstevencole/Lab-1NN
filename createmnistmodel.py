@@ -1,6 +1,7 @@
 import numpy as np
 import DnnLib
 import json
+import matplotlib.pyplot as plt
 
 data_train = np.load("mnist_train.npz")
 data_test = np.load("mnist_test.npz")
@@ -96,6 +97,9 @@ def backward(activations, y_true):
 epochs = 10
 batch_size = 32
 
+loss_history = []
+accuracy_history = []
+
 # Training
 for epoch in range(epochs):
     indices = np.random.permutation(len(train_images))
@@ -117,4 +121,19 @@ for epoch in range(epochs):
     test_pred = np.argmax(test_activations[-1], axis=1)
     accuracy = np.mean(test_pred == test_labels) * 100
 
-    print(f"Epoch {epoch+1} | Loss: {epoch_loss/(len(train_images)//batch_size):.4f} | Accuracy: {accuracy:.2f}%")
+    avg_loss = epoch_loss/(len(train_images)//batch_size)
+    loss_history.append(avg_loss)
+    accuracy_history.append(accuracy)
+
+    print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | Accuracy: {accuracy:.2f}%")
+
+
+
+
+plt.figure(figsize=(8, 6))
+plt.plot(accuracy_history, loss_history, 'ro-')
+plt.title('Pérdida vs Precisión')
+plt.xlabel('Precisión (%)')
+plt.ylabel('Pérdida')
+plt.grid(True)
+plt.show()
